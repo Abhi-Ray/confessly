@@ -5,11 +5,11 @@ export const metadata = {
   description: 'Share your deepest confessions anonymously on Confessly. A safe space for honest thoughts, secrets, and confessions. No judgment, just real stories.',
   keywords: 'anonymous confessions, secrets sharing, emotional support, mental health, anonymous platform, safe space, honest confessions, no judgment',
   alternates: {
-    canonical: 'https://confessly.in/home',
+    canonical: 'https://confessly.mooo.com/home',
   },
   openGraph: {
     type: 'website',
-    url: 'https://confessly.in/home',
+    url: 'https://confessly.mooo.com/home',
     title: 'Confessly — Anonymous Confessions & Secrets Platform',
     description: 'Share your deepest confessions anonymously on Confessly. A safe space for honest thoughts, secrets, and confessions. No judgment, just real stories.',
     images: [

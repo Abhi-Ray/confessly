@@ -8,11 +8,11 @@ export const metadata = {
   description: 'Discover and explore anonymous confessions on Confessly. Browse through real stories, secrets, and confessions shared by our community. A safe space for honest thoughts and emotional support.',
   keywords: 'explore confessions, anonymous confessions, secrets sharing, emotional support, mental health, anonymous platform, safe space, honest confessions, no judgment, browse confessions',
   alternates: {
-    canonical: 'https://confessly.in/explore',
+    canonical: 'https://confessly.mooo.com/explore',
   },
   openGraph: {
     type: 'website',
-    url: 'https://confessly.in/explore',
+    url: 'https://confessly.mooo.com/explore',
     title: 'Explore Confessions — Confessly Anonymous Confessions Platform',
     description: 'Discover and explore anonymous confessions on Confessly. Browse through real stories, secrets, and confessions shared by our community. A safe space for honest thoughts and emotional support.',
     images: [
@@ -76,13 +76,13 @@ const ExplorePage = () => {
             "@type": "WebPage",
             "name": "Explore Confessions — Confessly Anonymous Confessions Platform",
             "description": "Discover and explore anonymous confessions on Confessly. Browse through real stories, secrets, and confessions shared by our community.",
-            "url": "https://confessly.in/explore",
+            "url": "https://confessly.mooo.com/explore",
             "publisher": {
               "@type": "Organization",
               "name": "Confessly",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://confessly.in/logo.png"
+                "url": "https://confessly.mooo.com/logo.png"
               }
             },
             "mainEntity": {

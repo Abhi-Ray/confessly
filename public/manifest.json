@@ -1,21 +1,54 @@
 {
-  "name": "Confessly",
+  "name": "Confessly — Say What You Never Could",
   "short_name": "Confessly",
-  "description": "Your confession app",
+  "description": "Anonymous platform for honest confessions. No names, no filters. Just truth.",
   "theme_color": "#0d0d0d",
   "background_color": "#0d0d0d",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
-  "orientation": "portrait",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "scope": "/",
   "start_url": "/?source=pwa",
   "prefer_related_applications": false,
   "categories": ["social", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png", 
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
   "shortcuts": [
     {
-      "name": "Home",
-      "url": "/",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "New Confession",
+      "short_name": "Confess",
+      "description": "Share a new anonymous confession",
+      "url": "/confess?source=shortcut",
+      "icons": [{ 
+        "src": "/icon-192x192.png", 
+        "sizes": "192x192",
+        "type": "image/png"
+      }]
+    },
+    {
+      "name": "Browse",
+      "short_name": "Browse", 
+      "description": "Browse recent confessions",
+      "url": "/browse?source=shortcut",
+      "icons": [{ 
+        "src": "/icon-192x192.png", 
+        "sizes": "192x192",
+        "type": "image/png"
+      }]
     }
   ],
   "icons": [
