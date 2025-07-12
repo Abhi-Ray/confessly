@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { FiHeart, FiMessageCircle, FiFlag, FiSend, FiTrendingUp, FiMapPin, FiShuffle } from 'react-icons/fi';
+import { FiHeart, FiMessageCircle, FiFlag, FiSend, FiTrendingUp, FiMapPin, FiShuffle, FiUser } from 'react-icons/fi';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaFlag } from 'react-icons/fa';
 import Image from 'next/image'
@@ -147,7 +147,7 @@ const Explore = () => {
   const [openCommentId, setOpenCommentId] = useState(null);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState([]);
-  const [tab, setTab] = useState('trending'); // 'trending' | 'near' | 'random'
+  const [tab, setTab] = useState('trending'); // 'trending' | 'near' | 'random' | 'mine'
   const [isClosing, setIsClosing] = useState(false);
   const scrollPositionRef = useRef(0);
 
@@ -186,6 +186,13 @@ const Explore = () => {
       return '/api/near';
     }
     if (tab === 'random') return '/api/random';
+    if (tab === 'mine') {
+      if (typeof window !== 'undefined') {
+        const anon_id = localStorage.getItem('anon_id');
+        if (anon_id) return `/api/mine?anon_id=${encodeURIComponent(anon_id)}`;
+      }
+      return '/api/mine';
+    }
     return '/api/post';
   };
 
@@ -331,16 +338,17 @@ const Explore = () => {
         </div>
         
         {/* Tabs */}
-        <div className="flex justify-center mb-6 gap-2">
-          {['trending', 'near', 'random'].map((t) => {
+        <div className="flex justify-center mb-6 gap-1">
+          {['trending', 'near', 'random', 'mine'].map((t) => {
             let Icon;
             if (t === 'trending') Icon = FiTrendingUp;
             else if (t === 'near') Icon = FiMapPin;
             else if (t === 'random') Icon = FiShuffle;
+            else if (t === 'mine') Icon = FiUser;
             return (
               <button
                 key={t}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 border focus:outline-none ${
+                className={`px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border focus:outline-none ${
                   tab === t 
                     ? 'bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black border-rose-300/30 shadow-lg shadow-rose-400/20' 
                     : 'bg-zinc-900/50 backdrop-blur-sm text-rose-300 border-rose-300/20 hover:bg-rose-900/30 hover:border-rose-300/40'
@@ -354,8 +362,8 @@ const Explore = () => {
                   }
                 }}
               >
-                <span className="inline-flex items-center gap-2">
-                  <Icon size={16} />
+                <span className="inline-flex items-center gap-1">
+                  <Icon size={14} />
                   {t.charAt(0).toUpperCase() + t.slice(1)}
                 </span>
               </button>

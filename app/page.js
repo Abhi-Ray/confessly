@@ -38,26 +38,8 @@ export default function SplashScreen() {
           separator: '-',
           length: 3
         });
-        // Store in localStorage with 3 months expiry
-        const expiryDate = new Date();
-        expiryDate.setMonth(expiryDate.getMonth() + 3);
+        // Store in localStorage without expiry
         localStorage.setItem('anon_id', anonId);
-        localStorage.setItem('anon_id_expiry', expiryDate.toISOString());
-      } else {
-        // Check if the ID has expired
-        const expiryDate = new Date(localStorage.getItem('anon_id_expiry'));
-        if (new Date() > expiryDate) {
-          // Generate new ID if expired
-          anonId = uniqueNamesGenerator({
-            dictionaries: [adjectives, colors, animals],
-            separator: '-',
-            length: 3
-          });
-          const newExpiryDate = new Date();
-          newExpiryDate.setMonth(newExpiryDate.getMonth() + 3);
-          localStorage.setItem('anon_id', anonId);
-          localStorage.setItem('anon_id_expiry', newExpiryDate.toISOString());
-        }
       }
       // Always set geo info with anon_id
       const geo = await getGeoInfo();
