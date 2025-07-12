@@ -11,8 +11,26 @@ function timeAgo(dateString) {
   const date = new Date(dateString);
   const diffInMs = now.getTime() - date.getTime();
   
-  // Handle future dates or invalid dates
-  if (diffInMs < 0 || isNaN(diffInMs)) {
+  // Handle invalid dates
+  if (isNaN(diffInMs)) {
+    return 'Just now';
+  }
+  
+  // Handle future dates - show as "Just now" or "in X time"
+  if (diffInMs < 0) {
+    const absDiffInMs = Math.abs(diffInMs);
+    const seconds = Math.floor(absDiffInMs / 1000);
+    if (seconds < 60) return 'Just now';
+    
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `in ${minutes}m`;
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `in ${hours}h`;
+    
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `in ${days}d`;
+    
     return 'Just now';
   }
   
