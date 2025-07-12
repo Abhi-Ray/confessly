@@ -8,8 +8,14 @@ import Navigation from '@/components/common/nav'
 
 function timeAgo(dateString) {
   const now = new Date();
+  
+  // Parse the date string and adjust for timezone
+  // Since your DB is +5:30 but API returns UTC, we need to add 5.5 hours
   const date = new Date(dateString);
-  const diffInMs = now.getTime() - date.getTime();
+  const timezoneOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+  const adjustedDate = new Date(date.getTime() + timezoneOffset);
+  
+  const diffInMs = now.getTime() - adjustedDate.getTime();
   
   // Handle invalid dates
   if (isNaN(diffInMs)) {
