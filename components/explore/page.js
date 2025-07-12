@@ -9,7 +9,11 @@ import Navigation from '@/components/common/nav'
 function timeAgo(dateString) {
   const now = new Date();
   const date = new Date(dateString);
-  const seconds = Math.floor((now - date) / 1000);
+  
+  // Calculate time difference in milliseconds
+  const timeDiff = now.getTime() - date.getTime();
+  const seconds = Math.floor(timeDiff / 1000);
+  
   if (seconds < 60) return `${seconds}s ago`;
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
@@ -17,6 +21,8 @@ function timeAgo(dateString) {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d ago`;
+  
+  // For dates older than a week, show the local date
   return date.toLocaleDateString();
 }
 
