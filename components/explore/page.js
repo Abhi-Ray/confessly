@@ -21,7 +21,7 @@ function timeAgo(dateString) {
 }
 
 const ConfessionCard = ({ confession, onLike, onReport, liked, reported, onComment }) => (
-  <div className="bg-gradient-to-br from-zinc-900/90 to-black/95 backdrop-blur-sm border border-rose-300/10 rounded-2xl p-5 mb-4 shadow-lg hover:shadow-xl hover:shadow-rose-400/10 transition-all duration-300 hover:border-rose-300/20 relative group">
+  <div className="bg-black backdrop-blur-sm border border-rose-300/10 rounded-2xl p-5 mb-4 shadow-lg hover:shadow-xl hover:shadow-rose-400/10 transition-all duration-300 hover:border-rose-300/20 relative group">
     <button
       className={`absolute top-4 right-4 p-1.5 rounded-full transition-all duration-200 ${
         reported 
@@ -324,7 +324,7 @@ const Explore = () => {
 
   return (
     <> 
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-950 to-black text-white flex flex-col items-center pt-2 pb-20">
+    <div className="min-h-screen bg-black via-zinc-950 to-black text-white flex flex-col items-center pt-2 pb-20">
       <main className="w-full max-w-md px-2">
         <div className="flex justify-center mb-4">
           <Image
@@ -338,7 +338,7 @@ const Explore = () => {
         </div>
         
         {/* Tabs */}
-        <div className="flex justify-center mb-6 gap-1">
+        <div className="flex justify-center mb-6 gap-2">
           {['trending', 'near', 'random', 'mine'].map((t) => {
             let Icon;
             if (t === 'trending') Icon = FiTrendingUp;
