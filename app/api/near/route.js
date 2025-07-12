@@ -1,4 +1,4 @@
-import { supabase } from '../db';
+import { executeQuery } from '../db';
 import { NextResponse } from 'next/server';
 
 // Helper to get current timestamp minus 48 hours
@@ -21,18 +21,16 @@ export async function GET(request) {
     const hoursAgo48 = new Date(now.getTime() - 48 * 60 * 60 * 1000);
 
     // Fetch confessions with status true, created within last 48 hours, matching city, sorted by latest
-    const { data, error } = await supabase
-      .from('confessions')
-      .select('*')
-      .eq('status', true)
-      .eq('city', city)
-      .gte('created_at', hoursAgo48.toISOString())
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching confessions:', error);
-      return NextResponse.json({ error: 'Failed to fetch confessions' }, { status: 500 });
-    }
+    const query = `
+      SELECT * FROM confessions 
+      WHERE status = true 
+        AND city = ? 
+        AND created_at >= ? 
+        AND expires_at > NOW()
+      ORDER BY created_at DESC
+    `;
+    
+    const data = await executeQuery(query, [city, hoursAgo48.toISOString()]);
 
     return NextResponse.json({ data, status: true }, { status: 200 });
   } catch (error) {

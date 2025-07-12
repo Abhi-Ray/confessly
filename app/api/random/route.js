@@ -1,4 +1,4 @@
-import { supabase } from '../db';
+import { executeQuery } from '../db';
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
@@ -8,19 +8,14 @@ export async function GET(request) {
     const hoursAgo48 = new Date(now.getTime() - 48 * 60 * 60 * 1000);
 
     // Fetch confessions with status true, created within last 48 hours
-    const { data, error } = await supabase
-      .from('confessions')
-      .select('*')
-      .eq('status', true)
-      .gte('created_at', hoursAgo48.toISOString());
-
-    if (error) {
-      console.error('Error fetching confessions:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch confessions' },
-        { status: 500 }
-      );
-    }
+    const query = `
+      SELECT * FROM confessions 
+      WHERE status = true 
+        AND created_at >= ? 
+        AND expires_at > NOW()
+    `;
+    
+    const data = await executeQuery(query, [hoursAgo48.toISOString()]);
 
     // Shuffle the data array randomly
     const shuffled = Array.isArray(data)
@@ -29,7 +24,7 @@ export async function GET(request) {
 
     return NextResponse.json({ data: shuffled, status: true }, { status: 200 });
   } catch (error) {
-    console.error('Error in GET /api/near:', error);
+    console.error('Error in GET /api/random:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -1,4 +1,4 @@
-import { supabase } from '../db';
+import { executeQuery } from '../db';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
@@ -21,31 +21,27 @@ export async function POST(request) {
     const expires_at = new Date();
     expires_at.setDate(expires_at.getDate() + 30);
 
-    // Insert confession into Supabase
-    const { data, error } = await supabase
-      .from('confessions')
-      .insert([
-        {
-          content: content.trim(),
-          anon_id: anon_id || 'anonymous',
-          city: city || null,
-          ip: ip || null,
-          created_at: new Date().toISOString(),
-          expires_at: expires_at.toISOString(),
-          status: true,
-        },
-      ])
-      .select();
+    // Insert confession into MySQL
+    const query = `
+      INSERT INTO confessions (content, anon_id, city, ip, expires_at, status)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    
+    const params = [
+      content.trim(),
+      anon_id || 'anonymous',
+      city || null,
+      ip || null,
+      expires_at.toISOString().slice(0, 19).replace('T', ' '), // Format as MySQL datetime
+      true
+    ];
 
-    if (error) {
-      console.error('Error inserting confession:', error);
-      return NextResponse.json(
-        { error: 'Failed to create confession' },
-        { status: 500 }
-      );
-    }
+    const result = await executeQuery(query, params);
 
-    return NextResponse.json({ data }, { status: 201 });
+    return NextResponse.json({ 
+      data: { id: result.insertId },
+      status: true 
+    }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/post:', error);
     return NextResponse.json(
@@ -58,18 +54,13 @@ export async function POST(request) {
 export async function GET(request) {
   try {
     // Fetch all confessions, sorted by created_at descending
-    const { data, error } = await supabase
-      .from('confessions')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching confessions:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch confessions' },
-        { status: 500 }
-      );
-    }
+    const query = `
+      SELECT * FROM confessions 
+      WHERE status = true AND expires_at > NOW()
+      ORDER BY created_at DESC
+    `;
+    
+    const data = await executeQuery(query);
 
     return NextResponse.json({ data, status: true }, { status: 200 });
   } catch (error) {

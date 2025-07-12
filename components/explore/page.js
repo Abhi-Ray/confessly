@@ -76,6 +76,64 @@ const ConfessionCard = ({ confession, onLike, onReport, liked, reported, onComme
   </div>
 );
 
+// Creative Chat Loader Component
+const CreativeLoader = () => (
+  <div className="flex flex-col items-center justify-center py-12 space-y-6">
+    {/* Animated Chat Bubbles */}
+    <div className="flex items-end space-x-2 mb-4">
+      <div className="w-3 h-3 bg-gradient-to-r from-rose-400 to-amber-300 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+      <div className="w-3 h-3 bg-gradient-to-r from-rose-400 to-amber-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+      <div className="w-3 h-3 bg-gradient-to-r from-rose-400 to-amber-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+    </div>
+    
+    {/* Animated Message Bubbles */}
+    <div className="space-y-3 w-full max-w-xs">
+      <div className="flex justify-start">
+        <div className="bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-2xl rounded-bl-md px-4 py-2 animate-pulse">
+          <div className="h-3 bg-zinc-600 rounded w-20 mb-1"></div>
+          <div className="h-3 bg-zinc-600 rounded w-32"></div>
+        </div>
+      </div>
+      
+      <div className="flex justify-end">
+        <div className="bg-gradient-to-r from-rose-500 to-amber-400 rounded-2xl rounded-br-md px-4 py-2 animate-pulse" style={{ animationDelay: '0.3s' }}>
+          <div className="h-3 bg-white/30 rounded w-24 mb-1"></div>
+          <div className="h-3 bg-white/30 rounded w-16"></div>
+        </div>
+      </div>
+      
+      <div className="flex justify-start">
+        <div className="bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-2xl rounded-bl-md px-4 py-2 animate-pulse" style={{ animationDelay: '0.6s' }}>
+          <div className="h-3 bg-zinc-600 rounded w-28"></div>
+        </div>
+      </div>
+    </div>
+    
+    {/* Typing Indicator */}
+    <div className="flex items-center space-x-2 mt-6">
+      <div className="text-rose-300 text-sm font-medium">Loading confessions</div>
+      <div className="flex space-x-1">
+        <div className="w-2 h-2 bg-rose-400 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
+        <div className="w-2 h-2 bg-rose-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-2 h-2 bg-rose-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+      </div>
+    </div>
+    
+    {/* Floating Hearts */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute top-1/4 left-1/4 text-rose-400/20 animate-bounce" style={{ animationDelay: '0.5s' }}>
+        <FiHeart size={16} />
+      </div>
+      <div className="absolute top-1/3 right-1/4 text-amber-400/20 animate-bounce" style={{ animationDelay: '1s' }}>
+        <FiHeart size={12} />
+      </div>
+      <div className="absolute bottom-1/4 left-1/3 text-rose-300/20 animate-bounce" style={{ animationDelay: '1.5s' }}>
+        <FiHeart size={14} />
+      </div>
+    </div>
+  </div>
+);
+
 const PAGE_SIZE = 30;
 
 const Explore = () => {
@@ -138,7 +196,7 @@ const Explore = () => {
       const res = await fetch(endpoint);
       const data = await res.json();
       if (data && data.data) {
-        const filtered = data.data.filter((c) => c.status === true);
+        const filtered = data.data.filter((c) => c.status === 1);
         const start = (pageNum - 1) * PAGE_SIZE;
         const end = start + PAGE_SIZE;
         const nextPageData = filtered.slice(start, end);
@@ -317,51 +375,8 @@ const Explore = () => {
           />
         ))}
        {loading && (
-  <div className="text-center py-8">
-    <div className="relative inline-flex items-center justify-center w-20 h-20 mb-4">
-      {/* Rotating outer ring */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 animate-spin" style={{ animationDuration: '2s' }}></div>
-      <div className="absolute inset-1 rounded-full bg-black"></div>
-      
-      {/* Anonymous face */}
-      <div className="relative z-10 flex items-center justify-center w-16 h-16">
-        {/* Face outline with subtle pulse */}
-        <div className="absolute w-14 h-14 rounded-full border-2 border-rose-300/70 animate-pulse"></div>
-        
-        {/* Eyes - blinking animation */}
-        <div className="absolute top-4 left-3.5 w-1.5 h-1.5 bg-rose-300 rounded-full animate-pulse" style={{ animationDelay: '0.2s', animationDuration: '1.5s' }}></div>
-        <div className="absolute top-4 right-3.5 w-1.5 h-1.5 bg-rose-300 rounded-full animate-pulse" style={{ animationDelay: '0.2s', animationDuration: '1.5s' }}></div>
-        
-        {/* Nose - simple dot */}
-        <div className="absolute top-6 w-0.5 h-0.5 bg-rose-300/60 rounded-full"></div>
-        
-        {/* Mouth - curved line using border */}
-        <div className="absolute top-7 w-4 h-2 border-b-2 border-rose-300/70 rounded-full animate-pulse" style={{ animationDelay: '0.8s', animationDuration: '2s' }}></div>
-        
-        {/* Question mark overlay for anonymity */}
-        <div className="absolute bottom-1 text-amber-300 text-xs font-bold animate-bounce opacity-80" style={{ animationDelay: '1s', animationDuration: '1.8s' }}>
-          ?
-        </div>
-        
-        {/* Floating mystery dots */}
-        <div className="absolute -top-1 -left-1 w-0.5 h-0.5 bg-amber-300 rounded-full animate-ping" style={{ animationDelay: '0s', animationDuration: '2s' }}></div>
-        <div className="absolute -top-1 -right-1 w-0.5 h-0.5 bg-rose-400 rounded-full animate-ping" style={{ animationDelay: '0.5s', animationDuration: '2s' }}></div>
-        <div className="absolute -bottom-1 -left-1 w-0.5 h-0.5 bg-rose-300 rounded-full animate-ping" style={{ animationDelay: '1s', animationDuration: '2s' }}></div>
-        <div className="absolute -bottom-1 -right-1 w-0.5 h-0.5 bg-amber-400 rounded-full animate-ping" style={{ animationDelay: '1.5s', animationDuration: '2s' }}></div>
-        
-        {/* Mysterious aura effect */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-rose-400/10 via-transparent to-amber-300/10 animate-pulse" style={{ animationDuration: '3s' }}></div>
-      </div>
-    </div>
-    
-    {/* Loading text with gradient and mystery theme */}
-    <div className="bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 bg-clip-text">
-      <p className="text-transparent text-sm font-bold animate-pulse" style={{ animationDuration: '2s' }}>
-        Reading anonymous minds...
-      </p>
-    </div>
-  </div>
-)}
+          <CreativeLoader />
+        )}
         <div ref={loader} />
         {!hasMore && confessions.length > 0 && (
           <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
