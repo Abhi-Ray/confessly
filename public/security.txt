@@ -1,0 +1,5 @@
+Contact: mailto:security@confessly.in
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://confessly.in/.well-known/security.txt
+Policy: https://confessly.in/security-policy 

@@ -31,7 +31,7 @@ const Nav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md rounded-t-2xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent backdrop-blur-lg rounded-t-2xl">
       <div className="mx-auto max-w-md">
         <div className="flex items-center justify-around px-2 py-2 pt-6">
           {navItems.map((item) => {
@@ -53,7 +53,7 @@ const Nav = () => {
                     : 'text-gray-500 hover:text-[#D4A5A5]'
                 } ${item.isCenter ? 'transform -translate-y-4' : ''}`}
               >
-                <div className={`backdrop-blur-md bg-white/5 border border-white/10 p-2 rounded-full transform hover:scale-110 transition-all duration-200 ${
+                <div className={` bg-white/5 border border-white/10 p-2 rounded-full transform hover:scale-110 transition-all duration-200 ${
                   item.isCenter 
                     ? 'p-3 bg-gradient-to-br from-[#B76E79]/20 via-[#D4A5A5]/20 to-[#E6C7C7]/20 rounded-[2rem]' 
                     : 'rounded-[1.5rem]'

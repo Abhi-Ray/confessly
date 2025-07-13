@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Confessly — Anonymous Confessions</title>
+    <description>Latest anonymous confessions and stories from Confessly</description>
+    <link>https://confessly.in</link>
+    <atom:link href="https://confessly.in/feed.xml" rel="self" type="application/rss+xml" />
+    <language>en-US</language>
+    <lastBuildDate>Mon, 01 Jan 2024 00:00:00 GMT</lastBuildDate>
+    <ttl>60</ttl>
+    
+    <item>
+      <title>Welcome to Confessly</title>
+      <description>An anonymous platform to share your deepest thoughts and confessions without fear of judgment.</description>
+      <link>https://confessly.in</link>
+      <guid>https://confessly.in</guid>
+      <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss> 

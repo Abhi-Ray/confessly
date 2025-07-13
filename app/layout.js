@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import "./globals.css";
 import Script from 'next/script';
+import { generateStructuredData } from './structured-data';
 
 // Initialize Inter font with latin subset
 const inter = Inter({
@@ -44,8 +45,12 @@ export const metadata = {
   },
   title: 'Confessly — Say What You Never Could',
   description: 'Confessly is an anonymous space to share confessions, thoughts, and secrets. No judgment, just real stories. Be heard, be honest, be free.',
-  keywords: 'confession app, anonymous confessions, emotional support, secrets, Gen Z social platform, say anything, no filter, Indian social app',
+  keywords: 'confession app, anonymous confessions, emotional support, secrets, Gen Z social platform, say anything, no filter, Indian social app, mental health, anonymous sharing, safe space, online community',
   authors: [{ name: 'Confessly Team' }],
+  creator: 'Confessly Team',
+  publisher: 'Confessly',
+  category: 'Social Platform',
+  classification: 'Social Media',
   
   // Open Graph / Facebook
   openGraph: {
@@ -53,8 +58,16 @@ export const metadata = {
     url: getBaseUrl(),
     title: 'Confessly — Say What You Never Could',
     description: 'An anonymous platform to express your deepest confessions. Say anything. No filters. No names. Just truth.',
-    images: [{ url: '/logo.png' }],
+    images: [
+      { 
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Confessly Logo'
+      }
+    ],
     siteName: 'Confessly',
+    locale: 'en_US',
   },
   
   // Twitter
@@ -64,14 +77,42 @@ export const metadata = {
     description: 'Anonymous platform for honest confessions. No names, no filters. Just truth.',
     images: ['/logo.png'],
     site: '@ConfesslyApp',
+    creator: '@ConfesslyApp',
   },
   
   // Icons
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' }
+    ],
     apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico',
   },
   manifest: '/manifest.json',
+  
+  // Additional SEO
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'eyI2V1gljarCONI9FXuCjBOddqymMA3bSZ9Ymbsyg1I',
+    yandex: 'your-yandex-verification-code', // Get from Yandex Webmaster
+    yahoo: 'your-yahoo-verification-code', // Get from Bing Webmaster Tools
+  },
+  other: {
+    'msapplication-TileColor': '#0d0d0d',
+    'msapplication-config': '/browserconfig.xml',
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -93,6 +134,19 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
         <meta name="language" content="English" />
         <link rel="canonical" href={getBaseUrl()} />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateStructuredData()),
+          }}
+        />
+        
+        {/* Additional SEO links */}
+        <link rel="search" type="application/opensearchdescription+xml" title="Confessly" href="/opensearch.xml" />
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <link rel="author" href="/humans.txt" />
         
         {/* PWA Mobile App Meta Tags */}
         <meta name="mobile-web-app-capable" content="yes" />

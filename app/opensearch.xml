@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Confessly</ShortName>
+  <Description>Search Confessly for anonymous confessions and stories</Description>
+  <Url type="application/rss+xml" template="https://confessly.in/search?q={searchTerms}"/>
+  <Url type="text/html" template="https://confessly.in/search?q={searchTerms}"/>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <Language>en-US</Language>
+  <LongName>Confessly Search</LongName>
+  <Image height="16" width="16" type="image/x-icon">https://confessly.in/favicon.ico</Image>
+  <Image height="64" width="64" type="image/png">https://confessly.in/icon-192x192.png</Image>
+</OpenSearchDescription> 
