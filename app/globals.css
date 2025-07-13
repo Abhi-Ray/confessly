@@ -47,4 +47,48 @@
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* Enhanced pull to refresh styles */
+.pull-to-refresh-container {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent bounce effect on iOS when not at top */
+.pull-to-refresh-container:not(.at-top) {
+  overscroll-behavior: none;
+}
+
+/* Smooth transitions for pull indicator */
+.pull-indicator {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent unwanted scrolling at bottom */
+.prevent-overscroll {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Body and app container styles to prevent interference */
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+#app-container {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure pull-to-refresh only works at the very top */
+.at-top {
+  overscroll-behavior: contain;
+}
+
+/* Prevent any bounce effects when not at top */
+.prevent-overscroll {
+  overscroll-behavior: none !important;
 }
