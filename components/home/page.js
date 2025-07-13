@@ -5,6 +5,7 @@ import { AiFillHeart } from 'react-icons/ai';
 import { FaFlag } from 'react-icons/fa';
 import Image from 'next/image'
 import Navigation from '@/components/common/nav'
+import PullToRefresh from '@/components/common/PullToRefresh'
 
 function timeAgo(dateString) {
   const now = new Date();
@@ -195,6 +196,14 @@ const Home = () => {
     }
   }, []);
 
+  // Pull to refresh handler
+  const handleRefresh = useCallback(async () => {
+    setPage(1);
+    setConfessions([]);
+    setHasMore(true);
+    await fetchConfessions(1);
+  }, [fetchConfessions]);
+
   useEffect(() => {
     fetchConfessions(page);
   }, [page, fetchConfessions]);
@@ -292,44 +301,46 @@ const Home = () => {
   return (
     <> 
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-2 pb-20">
-      <main className="w-full max-w-md px-2">
-        <div className="flex justify-center mb-4">
-          <Image
-            src="/head.png"
-            alt="Confessly Head"
-            width={160}
-            height={160}
-            className="w-36 h-16 object-contain"
-            priority
-          />
-        </div>
-       
-        {confessions.map((confession, idx) => (
-          <div 
-            key={`${confession.id}-${idx}`}
-            style={{ animationDelay: `${idx * 0.1}s` }}
-            className="animate-fadeIn"
-          >
-            <ConfessionCard
-              confession={confession}
-              onLike={handleLike}
-              onReport={handleReport}
-              liked={likedIds.includes(confession.id)}
-              reported={reportedIds.includes(confession.id)}
-              onComment={openComments}
+      <PullToRefresh onRefresh={handleRefresh}>
+        <main className="w-full max-w-md px-2">
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/head.png"
+              alt="Confessly Head"
+              width={160}
+              height={160}
+              className="w-36 h-16 object-contain"
+              priority
             />
           </div>
-        ))}
-       
-       {loading && (
-          <CreativeLoader />
-        )}
+         
+          {confessions.map((confession, idx) => (
+            <div 
+              key={`${confession.id}-${idx}`}
+              style={{ animationDelay: `${idx * 0.1}s` }}
+              className="animate-fadeIn"
+            >
+              <ConfessionCard
+                confession={confession}
+                onLike={handleLike}
+                onReport={handleReport}
+                liked={likedIds.includes(confession.id)}
+                reported={reportedIds.includes(confession.id)}
+                onComment={openComments}
+              />
+            </div>
+          ))}
+         
+         {loading && (
+            <CreativeLoader />
+          )}
 
-        <div ref={loader} />
-        {!hasMore && confessions.length > 0 && (
-          <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
-        )}
-      </main>
+          <div ref={loader} />
+          {!hasMore && confessions.length > 0 && (
+            <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
+          )}
+        </main>
+      </PullToRefresh>
       
       {openCommentId && (
         <div

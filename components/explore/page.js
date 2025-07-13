@@ -5,6 +5,7 @@ import { AiFillHeart } from 'react-icons/ai';
 import { FaFlag } from 'react-icons/fa';
 import Image from 'next/image'
 import Navigation from '@/components/common/nav'
+import PullToRefresh from '@/components/common/PullToRefresh'
 
 function timeAgo(dateString) {
   const now = new Date();
@@ -217,6 +218,14 @@ const Explore = () => {
     }
   }, [tab]);
 
+  // Pull to refresh handler
+  const handleRefresh = useCallback(async () => {
+    setPage(1);
+    setConfessions([]);
+    setHasMore(true);
+    await fetchConfessions(1, tab);
+  }, [fetchConfessions, tab]);
+
   useEffect(() => {
     setPage(1);
     setConfessions([]);
@@ -325,71 +334,73 @@ const Explore = () => {
   return (
     <> 
     <div className="min-h-screen bg-black via-zinc-950 to-black text-white flex flex-col items-center pt-2 pb-20">
-      <main className="w-full max-w-md px-2">
-        <div className="flex justify-center mb-4">
-          <Image
-            src="/head.png"
-            alt="Confessly Head"
-            width={160}
-            height={160}
-            className="w-36 h-16 object-contain"
-            priority
-          />
-        </div>
-        
-        {/* Tabs */}
-        <div className="flex justify-center mb-6 gap-2">
-          {['trending', 'near', 'random', 'mine'].map((t) => {
-            let Icon;
-            if (t === 'trending') Icon = FiTrendingUp;
-            else if (t === 'near') Icon = FiMapPin;
-            else if (t === 'random') Icon = FiShuffle;
-            else if (t === 'mine') Icon = FiUser;
-            return (
-              <button
-                key={t}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border focus:outline-none ${
-                  tab === t 
-                    ? 'bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black border-rose-300/30 shadow-lg shadow-rose-400/20' 
-                    : 'bg-zinc-900/50 backdrop-blur-sm text-rose-300 border-rose-300/20 hover:bg-rose-900/30 hover:border-rose-300/40'
-                }`}
-                onClick={() => {
-                  if (tab !== t) {
-                    setTab(t);
-                    setPage(1);
-                    setConfessions([]);
-                    setHasMore(true);
-                  }
-                }}
-              >
-                <span className="inline-flex items-center gap-1">
-                  <Icon size={14} />
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-       
-        {confessions.map((confession, idx) => (
-          <ConfessionCard
-            key={`${confession.id}-${idx}`}
-            confession={confession}
-            onLike={handleLike}
-            onReport={handleReport}
-            liked={likedIds.includes(confession.id)}
-            reported={reportedIds.includes(confession.id)}
-            onComment={openComments}
-          />
-        ))}
-       {loading && (
-          <CreativeLoader />
-        )}
-        <div ref={loader} />
-        {!hasMore && confessions.length > 0 && (
-          <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
-        )}
-      </main>
+      <PullToRefresh onRefresh={handleRefresh}>
+        <main className="w-full max-w-md px-2">
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/head.png"
+              alt="Confessly Head"
+              width={160}
+              height={160}
+              className="w-36 h-16 object-contain"
+              priority
+            />
+          </div>
+          
+          {/* Tabs */}
+          <div className="flex justify-center mb-6 gap-2">
+            {['trending', 'near', 'random', 'mine'].map((t) => {
+              let Icon;
+              if (t === 'trending') Icon = FiTrendingUp;
+              else if (t === 'near') Icon = FiMapPin;
+              else if (t === 'random') Icon = FiShuffle;
+              else if (t === 'mine') Icon = FiUser;
+              return (
+                <button
+                  key={t}
+                  className={`px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border focus:outline-none ${
+                    tab === t 
+                      ? 'bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black border-rose-300/30 shadow-lg shadow-rose-400/20' 
+                      : 'bg-zinc-900/50 backdrop-blur-sm text-rose-300 border-rose-300/20 hover:bg-rose-900/30 hover:border-rose-300/40'
+                  }`}
+                  onClick={() => {
+                    if (tab !== t) {
+                      setTab(t);
+                      setPage(1);
+                      setConfessions([]);
+                      setHasMore(true);
+                    }
+                  }}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <Icon size={14} />
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+         
+          {confessions.map((confession, idx) => (
+            <ConfessionCard
+              key={`${confession.id}-${idx}`}
+              confession={confession}
+              onLike={handleLike}
+              onReport={handleReport}
+              liked={likedIds.includes(confession.id)}
+              reported={reportedIds.includes(confession.id)}
+              onComment={openComments}
+            />
+          ))}
+         {loading && (
+            <CreativeLoader />
+          )}
+          <div ref={loader} />
+          {!hasMore && confessions.length > 0 && (
+            <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
+          )}
+        </main>
+      </PullToRefresh>
       
       {openCommentId && (
         <div
