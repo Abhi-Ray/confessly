@@ -4,8 +4,8 @@ import { FiHeart, FiMessageCircle, FiFlag, FiSend, FiTrendingUp, FiMapPin, FiShu
 import { AiFillHeart } from 'react-icons/ai';
 import { FaFlag } from 'react-icons/fa';
 import Image from 'next/image'
+import Link from 'next/link'
 import Navigation from '@/components/common/nav'
-import PullToRefresh from '@/components/common/PullToRefresh'
 
 function timeAgo(dateString) {
   const now = new Date();
@@ -151,6 +151,7 @@ const Explore = () => {
   const [tab, setTab] = useState('trending'); // 'trending' | 'near' | 'random' | 'mine'
   const [isClosing, setIsClosing] = useState(false);
   const scrollPositionRef = useRef(0);
+  const isFetchingRef = useRef(false);
 
   // Improved body scroll management - same as Home component
   useEffect(() => {
@@ -198,6 +199,8 @@ const Explore = () => {
   };
 
   const fetchConfessions = useCallback(async (pageNum, currentTab = tab) => {
+    if (loading || isFetchingRef.current) return; // Prevent multiple simultaneous requests
+    isFetchingRef.current = true;
     setLoading(true);
     try {
       const endpoint = getApiEndpoint(currentTab);
@@ -215,16 +218,11 @@ const Explore = () => {
       // handle error
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  }, [tab]);
+  }, [tab, loading]);
 
-  // Pull to refresh handler
-  const handleRefresh = useCallback(async () => {
-    setPage(1);
-    setConfessions([]);
-    setHasMore(true);
-    await fetchConfessions(1, tab);
-  }, [fetchConfessions, tab]);
+
 
   useEffect(() => {
     setPage(1);
@@ -242,18 +240,23 @@ const Explore = () => {
 
   // Infinite scroll observer
   useEffect(() => {
-    if (!hasMore || loading) return;
+    if (!hasMore || loading || isFetchingRef.current) return;
+    
     const observer = new window.IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && hasMore && !loading && !isFetchingRef.current) {
           setPage((prev) => prev + 1);
         }
       },
-      { threshold: 1 }
+      { threshold: 0.1 }
     );
-    if (loader.current) observer.observe(loader.current);
+    
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+    
     return () => {
-      if (loader.current) observer.unobserve(loader.current);
+      observer.disconnect();
     };
   }, [hasMore, loading]);
 
@@ -334,73 +337,115 @@ const Explore = () => {
   return (
     <> 
     <div className="min-h-screen bg-black via-zinc-950 to-black text-white flex flex-col items-center pt-2 pb-20">
-      <PullToRefresh onRefresh={handleRefresh}>
-        <main className="w-full max-w-md px-2">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="/head.png"
-              alt="Confessly Head"
-              width={160}
-              height={160}
-              className="w-36 h-16 object-contain"
-              priority
-            />
+      <main className="w-full max-w-md px-2">
+        <div className="flex justify-center mb-4">
+          <Image
+            src="/head.png"
+            alt="Confessly Head"
+            width={160}
+            height={160}
+            className="w-36 h-16 object-contain"
+            priority
+          />
+        </div>
+        
+        {/* Tabs */}
+        <div className="flex justify-center mb-6 gap-2">
+          {['trending', 'near', 'random', 'mine'].map((t) => {
+            let Icon;
+            if (t === 'trending') Icon = FiTrendingUp;
+            else if (t === 'near') Icon = FiMapPin;
+            else if (t === 'random') Icon = FiShuffle;
+            else if (t === 'mine') Icon = FiUser;
+            return (
+              <button
+                key={t}
+                className={`px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border focus:outline-none ${
+                  tab === t 
+                    ? 'bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black border-rose-300/30' 
+                    : 'bg-zinc-900/50 backdrop-blur-sm text-rose-300 border-rose-300/20 hover:bg-rose-900/30 hover:border-rose-300/40'
+                }`}
+                onClick={() => {
+                  if (tab !== t) {
+                    setTab(t);
+                    setPage(1);
+                    setConfessions([]);
+                    setHasMore(true);
+                  }
+                }}
+              >
+                <span className="inline-flex items-center gap-1">
+                  <Icon size={14} />
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+       
+        {!loading && confessions.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            {/* Empty State Icon */}
+            <div className="relative mb-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-rose-400/20 to-amber-300/20 flex items-center justify-center mb-4">
+                <FiMessageCircle size={32} className="text-rose-300" />
+              </div>
+              {/* Floating Elements */}
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-rose-400/30 rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-amber-300/30 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+            </div>
+            
+            {/* Empty State Text */}
+            <h3 className="text-xl font-bold text-rose-100 mb-2">No confessions yet</h3>
+            <p className="text-rose-200/70 text-center max-w-xs leading-relaxed mb-6">
+              {tab === 'trending' && "Be the first to share what's on your mind and start trending!"}
+              {tab === 'near' && "No confessions from your area yet. Share something local!"}
+              {tab === 'random' && "The confession jar is empty. Time to add some randomness!"}
+              {tab === 'mine' && "You haven't shared any confessions yet. Start your journey!"}
+            </p>
+            
+            {/* Action Button */}
+            <Link 
+              href="/post"
+              className="px-6 py-3 bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black font-semibold rounded-full hover:from-rose-500 hover:to-amber-400 transition-all duration-200 shadow-lg shadow-rose-400/20 inline-block"
+            >
+              Share Your First Confession
+            </Link>
+            
+            {/* Decorative Elements */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute top-1/4 left-1/4 text-rose-400/10 animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <FiHeart size={16} />
+              </div>
+              <div className="absolute top-1/3 right-1/4 text-amber-400/10 animate-bounce" style={{ animationDelay: '1s' }}>
+                <FiHeart size={12} />
+              </div>
+              <div className="absolute bottom-1/4 left-1/3 text-rose-300/10 animate-bounce" style={{ animationDelay: '1.5s' }}>
+                <FiHeart size={14} />
+              </div>
+            </div>
           </div>
-          
-          {/* Tabs */}
-          <div className="flex justify-center mb-6 gap-2">
-            {['trending', 'near', 'random', 'mine'].map((t) => {
-              let Icon;
-              if (t === 'trending') Icon = FiTrendingUp;
-              else if (t === 'near') Icon = FiMapPin;
-              else if (t === 'random') Icon = FiShuffle;
-              else if (t === 'mine') Icon = FiUser;
-              return (
-                <button
-                  key={t}
-                  className={`px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border focus:outline-none ${
-                    tab === t 
-                      ? 'bg-gradient-to-r from-rose-400 via-rose-300 to-amber-300 text-black border-rose-300/30 shadow-lg shadow-rose-400/20' 
-                      : 'bg-zinc-900/50 backdrop-blur-sm text-rose-300 border-rose-300/20 hover:bg-rose-900/30 hover:border-rose-300/40'
-                  }`}
-                  onClick={() => {
-                    if (tab !== t) {
-                      setTab(t);
-                      setPage(1);
-                      setConfessions([]);
-                      setHasMore(true);
-                    }
-                  }}
-                >
-                  <span className="inline-flex items-center gap-1">
-                    <Icon size={14} />
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-         
-          {confessions.map((confession, idx) => (
-            <ConfessionCard
-              key={`${confession.id}-${idx}`}
-              confession={confession}
-              onLike={handleLike}
-              onReport={handleReport}
-              liked={likedIds.includes(confession.id)}
-              reported={reportedIds.includes(confession.id)}
-              onComment={openComments}
-            />
-          ))}
-         {loading && (
-            <CreativeLoader />
-          )}
-          <div ref={loader} />
-          {!hasMore && confessions.length > 0 && (
-            <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
-          )}
-        </main>
-      </PullToRefresh>
+        )}
+        
+        {confessions.map((confession, idx) => (
+          <ConfessionCard
+            key={`${confession.id}-${idx}`}
+            confession={confession}
+            onLike={handleLike}
+            onReport={handleReport}
+            liked={likedIds.includes(confession.id)}
+            reported={reportedIds.includes(confession.id)}
+            onComment={openComments}
+          />
+        ))}
+       {loading && (
+          <CreativeLoader />
+        )}
+        <div ref={loader} />
+        {!hasMore && confessions.length > 0 && (
+          <div className="text-center text-rose-200/40 py-4">No more confessions.</div>
+        )}
+      </main>
       
       {openCommentId && (
         <div

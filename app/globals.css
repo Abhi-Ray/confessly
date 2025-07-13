@@ -92,3 +92,30 @@ body {
 .prevent-overscroll {
   overscroll-behavior: none !important;
 }
+
+/* Mobile-specific improvements for pull-to-refresh */
+@media (max-width: 768px) {
+  .pull-to-refresh-container {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  
+  .pull-to-refresh-container:not(.at-top) {
+    overscroll-behavior: none;
+    touch-action: pan-y;
+  }
+  
+  /* Improve touch responsiveness on mobile */
+  .pull-indicator {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+  
+  /* Prevent any interference with mobile scrolling */
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+}

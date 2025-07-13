@@ -31,7 +31,7 @@ const Nav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent backdrop-blur-lg rounded-t-2xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black  rounded-t-2xl">
       <div className="mx-auto max-w-md">
         <div className="flex items-center justify-around px-2 py-2 pt-6">
           {navItems.map((item) => {
